@@ -1,0 +1,30 @@
+version: 1.0-preview-1
+steps:
+  - id: build-nmi/1.4
+    build: -t {{.Run.Registry}}/public/k8s/aad-pod-identity/nmi:1.4 --target nmi --arg NMI_VERSION=1.4 .
+    when: ["-"]
+  - id: push-nmi/1.4
+    push: ["{{.Run.Registry}}/public/k8s/aad-pod-identity/nmi:1.4"]
+    when: ["build-nmi/1.4"]
+
+  - id: build-mic/1.3
+    build: -t {{.Run.Registry}}/public/k8s/aad-pod-identity/mic:1.3 --target mic --arg MIC_VERSION=1.3
+    when: ["-"]
+  - id: push-mic/1.3
+    push: ["{{.Run.Registry}}/mic:1.3"]
+    when: ["build-mic/1.3"]
+
+  - id: build-demo/1.2
+    build: -t {{.Run.Registry}}/public/k8s/aad-pod-identity/demo:1.2 --target demo --arg DEMO_VERSION=1.2
+    when: ["-"]
+  - id: push-demo/1.2
+    push: {{.Run.Registry}}/public/k8s/aad-pod-identity/demo:1.2
+    when: ["build-demo/1.2"]
+
+  - id: build-identityvalidator/1.0
+    build: -t {{.Run.Registry}}/public/k8s/aad-pod-identity/identityvalidator:1.0 --target demo --arg IDENTITIYVALIDATOR_VERSION=1.0
+    when: ["-"]
+  - id: push-identityvalidator/1.0
+    push: {{.Run.Registry}}/public/k8s/aad-pod-identity/identityvalidator:1.0
+    when: ["build-identityvalidator/1.0"]
+
