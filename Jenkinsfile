@@ -1,11 +1,11 @@
 pipeline {
 	parameters {
-		string defaultValue: '', description: 'Git repo to build from.', name: 'GIT_REPO', trim: false
+		string defaultValue: 'https://github.com/Azure/aad-pod-identity.git', description: 'Git repo to build from.', name: 'GIT_REPO', trim: false
 		credentials credentialType: 'com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl', defaultValue: '', description: 'Git repo credentials.', name: 'GIT_REPO_CREDENTIALS', required: true
 		string defaultValue: '', description: 'Git commit to build from.', name: 'GIT_COMMIT', trim: false
 
-		string defaultValue: '', description: 'Name of the ACR registry to push images to.', name: 'REGISTRY_NAME', trim: false
-		string defaultValue: '', description: 'The repository namespace to push the images to.', name: 'REGISTRY_REPO', trim: false
+		string defaultValue: 'upstreamk8sci', description: 'Name of the ACR registry to push images to.', name: 'REGISTRY_NAME', trim: false
+		string defaultValue: 'public/k8s/aad-pod-identity', description: 'The repository namespace to push the images to.', name: 'REGISTRY_REPO', trim: false
 		credentials credentialType: 'com.microsoft.azure.util.AzureCredentials', defaultValue: '', description: 'Which stored credentials to use to push image to.', name: 'REGISTRY_CREDENTIALS', required: true
 
 		choice choices: ['mic', 'nmi', 'demo', 'identityvalidator'], description: 'Select the component to build.', name: 'COMPONENT'
