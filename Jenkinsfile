@@ -8,6 +8,7 @@ pipeline {
 		string defaultValue: '', description: 'The repository namespace to push the images to.', name: 'REGISTRY_REPO', trim: false
 		credentials credentialType: 'com.microsoft.azure.util.AzureCredentials', defaultValue: '', description: 'Which stored credentials to use to push image to.', name: 'REGISTRY_CREDENTIALS', required: true
 
+		choice choices: ['mic', 'nmi', 'demo', 'identityvalidator'], description: 'Select the component to build.', name: 'COMPONENT'
 
 		string defaultValue: '', description: '', name: 'MIC_VERSION', trim: false
 		string defaultValue: '', description: '', name: 'NMI_VERSION', trim: false
@@ -38,7 +39,7 @@ pipeline {
 
 		stage('Build images') {
 			steps {
-				sh "make REGISTRY_NAME='${REGISTRY_NAME}' REGISTRY='${REGISTRY_NAME}.azurecr.io' REPO_PREFIX='${REGISTRY_REPO}' image"
+				sh "make REGISTRY_NAME='${REGISTRY_NAME}' REGISTRY='${REGISTRY_NAME}.azurecr.io' REPO_PREFIX='${REGISTRY_REPO}' image-${COMPONENT}"
 			}
 		}
 
@@ -48,7 +49,7 @@ pipeline {
 						sh "az login --service-principal -u '${AZURE_CLIENT_ID}' -p '${AZURE_CLIENT_SECRET}' -t '${AZURE_TENANT_ID}'"
 				}
 				sh "az acr login -n '${REGISTRY_NAME}'"
-				sh "make REGISTRY_NAME='${REGISTRY_NAME}' REGISTRY='${REGISTRY_NAME}.azurecr.io' REPO_PREFIX='${REGISTRY_REPO}' push"
+				sh "make REGISTRY_NAME='${REGISTRY_NAME}' REGISTRY='${REGISTRY_NAME}.azurecr.io' REPO_PREFIX='${REGISTRY_REPO}' push-${COMPONENT}"
 			}
 		}
 	}

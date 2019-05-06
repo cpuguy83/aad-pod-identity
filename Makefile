@@ -57,8 +57,8 @@ clean-mic:
 clean-demo:
 	rm -rf bin/$(PROJECT_NAME)/$(DEMO_BINARY_NAME)
 
-.PHONY: clean-idenity-validator
-clean-identity-validator:
+.PHONY: clean-idenityvalidator
+clean-identityvalidator:
 	rm -rf bin/$(PROJECT_NAME)/$(IDENTITY_VALIDATOR_BINARY_NAME)
 
 .PHONY: clean
@@ -81,12 +81,12 @@ build-demo: clean-demo
 bin/%:
 	GOOS=linux GOARCH=amd64 go build $(GO_BUILD_OPTIONS) -o "$(@)" "$(PKG_NAME)"
 
-.PHONY: build-identity-validator
-build-identity-validator: clean-identity-validator
+.PHONY: build-identityvalidator
+build-identityvalidator: clean-identityvalidator
 	PKG_NAME=github.com/Azure/$(PROJECT_NAME)/test/e2e/$(IDENTITY_VALIDATOR_BINARY_NAME) $(MAKE) bin/$(PROJECT_NAME)/$(IDENTITY_VALIDATOR_BINARY_NAME)
 
 .PHONY: build
-build: clean build-nmi build-mic build-demo build-identity-validator
+build: clean build-nmi build-mic build-demo build-identityvalidator
 
 .PHONY: deepcopy-gen
 deepcopy-gen:
@@ -94,22 +94,22 @@ deepcopy-gen:
 
 .PHONY: image-nmi
 image-nmi:
-	docker build -t "$(REGISTRY)/$(NMI_IMAGE)" --build-arg NMI_VEARSION="$(NMI_VERSION)" --target=nmi .
+	docker build -t "$(REGISTRY)/$(NMI_IMAGE)" --build-arg NMI_VEARSION="$(NMI_VERSION)" --build-arg COMPONENT=nmi --target=nmi .
 
 .PHONY: image-mic
 image-mic:
-	docker build -t "$(REGISTRY)/$(MIC_IMAGE)" --build-arg MIC_VERSION="$(MIC_VERSION)" --target=mic .
+	docker build -t "$(REGISTRY)/$(MIC_IMAGE)" --build-arg MIC_VERSION="$(MIC_VERSION)" --build-arg COMPONENT=mic --target=mic .
 
 .PHONY: image-demo
 image-demo:
-	docker build -t $(REGISTRY)/$(DEMO_IMAGE) --build-arg DEMO_VERSION="$(DEMO_VERSION)" --target=demo .
+	docker build -t $(REGISTRY)/$(DEMO_IMAGE) --build-arg DEMO_VERSION="$(DEMO_VERSION)" --build-arg COMPONENT=demo --target=demo .
 
-.PHONY: image-identity-validator
-image-identity-validator:
-	docker build -t $(REGISTRY)/$(IDENTITY_VALIDATOR_IMAGE) --build-arg IDENTITY_VALIDATOR_VERSION="$(IDENTITY_VALIDATOR_VERSION)" --target=identityvalidator .
+.PHONY: image-identityvalidator
+image-identityvalidator:
+	docker build -t $(REGISTRY)/$(IDENTITY_VALIDATOR_IMAGE) --build-arg IDENTITY_VALIDATOR_VERSION="$(IDENTITY_VALIDATOR_VERSION)" --build-arg COMPONENT=identityvalidator --target=identityvalidator .
 
-.PHONY: imag
-image:image-nmi image-mic image-demo image-identity-validator
+.PHONY: image
+image:image-nmi image-mic image-demo image-identityvalidator
 
 .PHONY: push-nmi
 push-nmi: validate-version-NMI
@@ -118,21 +118,21 @@ push-nmi: validate-version-NMI
 
 .PHONY: push-mic
 push-mic: validate-version-MIC
-	az acr repository show --name $(REGISTRY_NAME) --image $(MIC_IMAGE) > /dev/null 2>&1; if [[ $$? -eq 0 ]]; then echo "$(NMI_IMAGE) already exists" && exit 1; fi
+	az acr repository show --name $(REGISTRY_NAME) --image $(MIC_IMAGE) > /dev/null 2>&1; if [[ $$? -eq 0 ]]; then echo "$(MIC_IMAGE) already exists" && exit 1; fi
 	docker push $(REGISTRY)/$(MIC_IMAGE)
 
 .PHONY: push-demo
 push-demo: validate-version-DEMO
-	az acr repository show --name $(REGISTRY_NAME) --image $(DEMO_IMAGE) > /dev/null 2>&1; if [[ $$? -eq 0 ]]; then echo "$(NMI_IMAGE) already exists" && exit 1; fi
+	az acr repository show --name $(REGISTRY_NAME) --image $(DEMO_IMAGE) > /dev/null 2>&1; if [[ $$? -eq 0 ]]; then echo "$(DEMO_IMAGE) already exists" && exit 1; fi
 	docker push $(REGISTRY)/$(DEMO_IMAGE)
 
-.PHONY: push-identity-validator
-push-identity-validator: validate-version-IDENTITY_VALIDATOR
-	az acr repository show --name $(REGISTRY_NAME) --image $(IDENTITY_VALIDATOR_IMAGE) > /dev/null 2>&1; if [[ $$? -eq 0 ]]; then echo "$(NMI_IMAGE) already exists" && exit 1; fi
+.PHONY: push-identityvalidator
+push-identityvalidator: validate-version-IDENTITY_VALIDATOR
+	az acr repository show --name $(REGISTRY_NAME) --image $(IDENTITY_VALIDATOR_IMAGE) > /dev/null 2>&1; if [[ $$? -eq 0 ]]; then echo "$(IDENTITY_VALIDATOR_IMAGE) already exists" && exit 1; fi
 	docker push $(REGISTRY)/$(IDENTITY_VALIDATOR_IMAGE)
 
 .PHONY: push
-push: push-nmi push-mic push-demo push-identity-validator
+push: push-nmi push-mic push-demo push-identityvalidator
 
 .PHONY: e2e
 e2e:

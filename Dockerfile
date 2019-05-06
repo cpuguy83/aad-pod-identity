@@ -1,12 +1,21 @@
 FROM golang:1.11 AS build
 ENV GO111MODULE=on
 WORKDIR /go/src/github.com/Azure/aad-pod-identity
+COPY go.mod go.mod
+COPY go.sum go.sum
+RUN go mod download
 COPY . ./
 ARG NMI_VERSION=0.0.0-dev
 ARG MIC_VERSION=0.0.0-dev
 ARG DEMO_VERSION=0.0.0-dev
 ARG IDENTITY_VALIDATOR_VERSION=0.0.0-dev
-RUN make build
+ARG COMPONENT=""
+RUN \
+	if [ -z "${COMPONENT}" ]; then \
+		make build; \
+	else \
+		make build-${COMPONENT}; \
+	fi
 
 FROM alpine:3.8 AS base
 RUN apk add --no-cache \
