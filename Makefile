@@ -97,22 +97,22 @@ deepcopy-gen:
 
 .PHONY: image-nmi
 image-nmi:
-	docker build -t "$(REGISTRY)/$(NMI_IMAGE)" --build-arg NMI_VEARSION="$(NMI_VERSION)" --build-arg COMPONENT=nmi --target=nmi .
+	docker build -t "$(REGISTRY)/$(NMI_IMAGE)" --build-arg NMI_VEARSION="$(NMI_VERSION)" --target=nmi .
 
 .PHONY: image-mic
 image-mic:
-	docker build -t "$(REGISTRY)/$(MIC_IMAGE)" --build-arg MIC_VERSION="$(MIC_VERSION)" --build-arg COMPONENT=mic --target=mic .
+	docker build -t "$(REGISTRY)/$(MIC_IMAGE)" --build-arg MIC_VERSION="$(MIC_VERSION)" --target=mic .
 
 .PHONY: image-demo
 image-demo:
-	docker build -t $(REGISTRY)/$(DEMO_IMAGE) --build-arg DEMO_VERSION="$(DEMO_VERSION)" --build-arg COMPONENT=demo --target=demo .
+	docker build -t $(REGISTRY)/$(DEMO_IMAGE) --build-arg DEMO_VERSION="$(DEMO_VERSION)" --target=demo .
 
 .PHONY: image-identityvalidator
 image-identityvalidator:
-	docker build -t $(REGISTRY)/$(IDENTITY_VALIDATOR_IMAGE) --build-arg IDENTITY_VALIDATOR_VERSION="$(IDENTITY_VALIDATOR_VERSION)" --build-arg COMPONENT=identityvalidator --target=identityvalidator .
+	docker build -t $(REGISTRY)/$(IDENTITY_VALIDATOR_IMAGE) --build-arg IDENTITY_VALIDATOR_VERSION="$(IDENTITY_VALIDATOR_VERSION)" --target=identityvalidator .
 
 .PHONY: image
-image:image-nmi image-mic image-demo image-identityvalidator
+image: image-nmi image-mic image-demo image-identityvalidator
 
 .PHONY: push-nmi
 push-nmi: validate-version-NMI
