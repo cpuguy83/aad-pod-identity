@@ -38,8 +38,11 @@ pipeline {
 
 		stage("checkout source") {
 			steps {
-				git changelog: false, credentialsId: env.GIT_REPO_CREDENTIALS, poll: false, url: env.GIT_REPO
-				sh "git checkout -f '${GIT_COMMIT}'"
+				script {
+					cleanWs disableDeferredWipeout: true, deleteDirs: true
+					git changelog: false, credentialsId: env.GIT_REPO_CREDENTIALS, poll: false, url: env.GIT_REPO
+					sh "git checkout -f '${GIT_COMMIT}'"
+				}
 			}
 		}
 
