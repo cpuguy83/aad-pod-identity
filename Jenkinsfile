@@ -14,6 +14,8 @@ pipeline {
 		string defaultValue: '', description: '', name: 'NMI_VERSION', trim: false
 		string defaultValue: '', description: '', name: 'DEMO_VERSION', trim: false
 		string defaultValue: '', description: '', name: 'IDENTITY_VALIDATOR_VERSION', trim: false
+
+		booleanParam defaultValue: false, description: 'Set to true just trigger a build to init new parameters, nothing else will run', name: 'INIT_PARAMS'
 	}
 
 	agent {
@@ -24,6 +26,17 @@ pipeline {
 	}
 
 	stages {
+		stage("init params") {
+			when { expression { return params.INIT_PARAMS }}
+			steps {
+				script {
+					currentBuild.result = 'ABORTED'
+					error('parameters initialized')
+					return
+				}
+			}
+		}
+
 		stage("setup env") {
 			steps {
 				sh "apk add --no-cache docker make"
