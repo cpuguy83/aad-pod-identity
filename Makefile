@@ -1,6 +1,9 @@
 GO111MODULE ?= on
 export GO111MODULE
 
+DOCKER_BUILDKIT ?= 1
+export DOCKER_BUILDKIT
+
 ORG_PATH=github.com/Azure
 PROJECT_NAME := aad-pod-identity
 REPO_PATH="$(ORG_PATH)/$(PROJECT_NAME)"
