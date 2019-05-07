@@ -41,6 +41,7 @@ pipeline {
 				script {
 					cleanWs disableDeferredWipeout: true, deleteDirs: true
 					git changelog: false, credentialsId: env.GIT_REPO_CREDENTIALS, poll: false, url: env.GIT_REPO
+					checkout scm
 					sh "git checkout -f '${GIT_COMMIT}'"
 				}
 			}

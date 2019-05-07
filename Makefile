@@ -115,23 +115,33 @@ image-identityvalidator:
 image: image-nmi image-mic image-demo image-identityvalidator
 
 .PHONY: push-nmi
-push-nmi: validate-version-NMI
-	az acr repository show --name $(REGISTRY_NAME) --image $(NMI_IMAGE) > /dev/null 2>&1; if [[ $$? -eq 0 ]]; then echo "$(NMI_IMAGE) already exists" && exit 1; fi
+push-nmi: validate-version-NMI validate-image-nmi-not-exists
 	docker push $(REGISTRY)/$(NMI_IMAGE)
 
 .PHONY: push-mic
-push-mic: validate-version-MIC
-	az acr repository show --name $(REGISTRY_NAME) --image $(MIC_IMAGE) > /dev/null 2>&1; if [[ $$? -eq 0 ]]; then echo "$(MIC_IMAGE) already exists" && exit 1; fi
+push-mic: validate-version-MIC validate-image-mic-not-exists
 	docker push $(REGISTRY)/$(MIC_IMAGE)
+
+.PHONY: validate-image-mic-not-exists
+validate-image-mic-not-exists:
+	az acr repository show --name $(REGISTRY_NAME) --image $(MIC_IMAGE) > /dev/null 2>&1 || exit 0; \
+	echo $(MIC_IMAGE) already exists
+	false
+
+.PHONY: validate-image-nmi-not-exists
+validate-image-nmi-not-exists:
+	az acr repository show --name $(REGISTRY_NAME) --image $(NMI_IMAGE) > /dev/null 2>&1 || exit 0; \
+	echo "$(NMI_IMAGE) already exists"; \
+	false
 
 .PHONY: push-demo
 push-demo: validate-version-DEMO
-	az acr repository show --name $(REGISTRY_NAME) --image $(DEMO_IMAGE) > /dev/null 2>&1; if [[ $$? -eq 0 ]]; then echo "$(DEMO_IMAGE) already exists" && exit 1; fi
+	az acr repository show --name $(REGISTRY_NAME) --image $(DEMO_IMAGE) > /dev/null 2>&1 && { echo "$(DEMO_IMAGE) already exists"; exit 1 }
 	docker push $(REGISTRY)/$(DEMO_IMAGE)
 
 .PHONY: push-identityvalidator
 push-identityvalidator: validate-version-IDENTITY_VALIDATOR
-	az acr repository show --name $(REGISTRY_NAME) --image $(IDENTITY_VALIDATOR_IMAGE) > /dev/null 2>&1; if [[ $$? -eq 0 ]]; then echo "$(IDENTITY_VALIDATOR_IMAGE) already exists" && exit 1; fi
+	az acr repository show --name $(REGISTRY_NAME) --image $(IDENTITY_VALIDATOR_IMAGE) > /dev/null 2>&1 && { echo "$(IDENTITY_VALIDATOR_IMAGE) already exists"; exit 1 }
 	docker push $(REGISTRY)/$(IDENTITY_VALIDATOR_IMAGE)
 
 .PHONY: push
