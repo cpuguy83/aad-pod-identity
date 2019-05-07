@@ -18,11 +18,10 @@ pipeline {
 		booleanParam defaultValue: false, description: 'Set to true just trigger a build to init new parameters, nothing else will run', name: 'INIT_PARAMS'
 	}
 
-	agent {
-		docker {
-			image "microsoft/azure-cli"
-			args "-u root:root --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock"
-		}
+	agent any
+
+	environment {
+		AZURE_CONFIG_DIR = "${WORKSPACE}/.azure"
 	}
 
 	stages {
@@ -34,12 +33,6 @@ pipeline {
 					error('parameters initialized')
 					return
 				}
-			}
-		}
-
-		stage("setup env") {
-			steps {
-				sh "apk add --no-cache docker make"
 			}
 		}
 
