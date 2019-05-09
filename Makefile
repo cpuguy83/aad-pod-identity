@@ -136,12 +136,17 @@ validate-image-nmi-not-exists:
 
 .PHONY: push-demo
 push-demo: validate-version-DEMO
-	az acr repository show --name $(REGISTRY_NAME) --image $(DEMO_IMAGE) > /dev/null 2>&1 && { echo "$(DEMO_IMAGE) already exists"; exit 1 }
 	docker push $(REGISTRY)/$(DEMO_IMAGE)
 
+
+.PHONY: validate-image-identityvalidator-not-exists
+validate-image-nmi-not-exists:
+	az acr repository show --name $(REGISTRY_NAME) --image $(IDENTITY_VALIDATOR_IMAGE) > /dev/null 2>&1 || exit 0; \
+	echo "$(IDENTIY_VALIDATOR_IMAGE) already exists"; \
+	false
+
 .PHONY: push-identityvalidator
-push-identityvalidator: validate-version-IDENTITY_VALIDATOR
-	az acr repository show --name $(REGISTRY_NAME) --image $(IDENTITY_VALIDATOR_IMAGE) > /dev/null 2>&1 && { echo "$(IDENTITY_VALIDATOR_IMAGE) already exists"; exit 1 }
+push-identityvalidator: validate-version-IDENTITY_VALIDATOR validate-image-identityvalidator-not-exists
 	docker push $(REGISTRY)/$(IDENTITY_VALIDATOR_IMAGE)
 
 .PHONY: push
